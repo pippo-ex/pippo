@@ -3,7 +3,7 @@ use Mix.Config
 config :pippo, server_port: 4000
 
 config :pippo, web_hooks: [
-  {Pippo.WebHook.Ping, "/ping", []},
+  {Pippo.WebHook.Ping, "/ping"},
 ]
 
 config :pippo, producers: [
@@ -16,6 +16,6 @@ config :pippo, consumers: [
 ]
 
 config :pippo, flow: [
-  {Pippo.WebHook.Ping, Pippo.Consumer.ConsoleLogger},
-  {Pippo.WebHook.Ping, Pippo.Consumer.ConsoleInspector},
+  {Pippo.Producer.Ping, Pippo.Consumer.ConsoleLogger},
+  {Pippo.Producer.Ping, Pippo.Consumer.ConsoleInspector},
 ]

@@ -5,7 +5,7 @@ defmodule Pippo.Server do
   plug :match
   plug :dispatch
 
-  for {mod, scope, _} <- Application.get_env(:pippo, :web_hooks) do
+  for {mod, scope} <- Application.get_env(:pippo, :web_hooks) do
     match scope do
       unquote(mod).call(conn)
     end
