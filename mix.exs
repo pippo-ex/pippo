@@ -23,6 +23,7 @@ defmodule Pippo.MixProject do
   defp deps do
     [
       {:cowboy, "~> 2.6"},
+      {:eleveldb, "~> 2.2"},
       {:gen_stage, "~> 0.14"},
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.1"}
