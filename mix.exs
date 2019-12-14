@@ -22,8 +22,8 @@ defmodule Pippo.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:cowboy, "~> 2.6"},
-      {:eleveldb, "~> 2.2"},
+      {:cowboy, "~> 2.7"},
+      #{:eleveldb, "~> 2.2"},
       {:gen_stage, "~> 0.14"},
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.1"}
