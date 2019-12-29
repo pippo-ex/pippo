@@ -12,7 +12,7 @@ defmodule Pippo.Interpreter.Ast.PrefixExpression do
     def to_string(expression) do
       operator = expression.operator
       right = Node.to_string(expression.right)
-      "(#{operator} #{right})"
+      "(#{operator}#{right})"
     end
   end
 end

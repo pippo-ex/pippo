@@ -15,7 +15,11 @@ defmodule Pippo.Interpreter.Repl do
     case length(parser.errors) do
       0 ->
         {result, env} = Evaluator.eval(program, env)
-        IO.puts(Object.inspect(result))
+        case result do
+          nil -> nil
+          _ -> IO.puts(Object.inspect(result))
+        end
+
         loop(env)
 
       _ ->

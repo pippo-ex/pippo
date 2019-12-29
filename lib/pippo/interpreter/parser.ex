@@ -13,6 +13,7 @@ defmodule Pippo.Interpreter.Parser do
     InfixExpression,
     IntegerLiteral,
     LetStatement,
+    NullLiteral,
     PrefixExpression,
     Program,
     ReturnStatement,
@@ -48,6 +49,10 @@ defmodule Pippo.Interpreter.Parser do
     lparen: @precedence_levels.call,
     lbracket: @precedence_levels.index
   }
+
+  def from_tokens([%Token{type: :eof} = token]) do
+    %Parser{curr: token, peek: nil, tokens: [], errors: []}
+  end
 
   def from_tokens(tokens) do
     [curr | [peek | rest]] = tokens
@@ -160,6 +165,7 @@ defmodule Pippo.Interpreter.Parser do
   defp prefix_parse_fns(:if, p), do: parse_if_expression(p)
   defp prefix_parse_fns(:function, p), do: parse_function_literal(p)
   defp prefix_parse_fns(:string, p), do: parse_string_literal(p)
+  defp prefix_parse_fns(:null, p), do: parse_null_literal(p)
   defp prefix_parse_fns(:lbracket, p), do: parse_array_literal(p)
   defp prefix_parse_fns(:lbrace, p), do: parse_hash_literal(p)
 
@@ -315,6 +321,11 @@ defmodule Pippo.Interpreter.Parser do
 
   defp parse_string_literal(p) do
     expression = %StringLiteral{token: p.curr, value: p.curr.literal}
+    {p, expression}
+  end
+
+  defp parse_null_literal(p) do
+    expression = %NullLiteral{token: p.curr}
     {p, expression}
   end
 

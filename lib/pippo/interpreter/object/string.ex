@@ -7,7 +7,7 @@ defmodule Pippo.Interpreter.Object.String do
   defimpl Object, for: __MODULE__ do
     def type(_), do: "STRING"
 
-    def inspect(obj), do: obj.value
+    def inspect(obj), do: "\"#{obj.value}\""
   end
 
   defimpl Hash.Hashable, for: __MODULE__ do

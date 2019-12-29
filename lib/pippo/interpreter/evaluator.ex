@@ -13,6 +13,7 @@ defmodule Pippo.Interpreter.Evaluator do
     InfixExpression,
     IntegerLiteral,
     LetStatement,
+    NullLiteral,
     PrefixExpression,
     Program,
     ReturnStatement,
@@ -80,6 +81,10 @@ defmodule Pippo.Interpreter.Evaluator do
   def eval(%StringLiteral{} = ast_node, env) do
     value = %String{value: ast_node.value}
     {value, env}
+  end
+
+  def eval(%NullLiteral{}, env) do
+    {@cached_null, env}
   end
 
   def eval(%PrefixExpression{} = ast_node, env) do

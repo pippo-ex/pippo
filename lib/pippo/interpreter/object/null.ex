@@ -6,6 +6,6 @@ defmodule Pippo.Interpreter.Object.Null do
   defimpl Object, for: __MODULE__ do
     def type(_), do: "NULL"
 
-    def inspect(_), do: nil
+    def inspect(_), do: "nil"
   end
 end

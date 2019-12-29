@@ -1,64 +1,58 @@
 defmodule Pippo.Interpreter.Lexer do
+  import Pippo.Interpreter.Qualifier
   alias Pippo.Interpreter.Token
 
   def tokenize(input) do
-    chars = String.split(input, "", trim: true)
-    tokenize(chars, [])
+    tokenize(String.trim(input), [])
   end
 
-  defp tokenize(_chars = [], tokens) do
+  defp tokenize("", tokens) do
     Enum.reverse([Token.new(type: :eof, literal: "") | tokens])
   end
-
-  defp tokenize(chars = [ch | rest], tokens) do
-    cond do
-      is_whitespace(ch) -> tokenize(rest, tokens)
-      is_letter(ch) -> read_identifier(chars, tokens)
-      is_digit(ch) -> read_number(chars, tokens)
-      is_two_char_operator(chars) -> read_two_char_operator(chars, tokens)
-      is_quote(ch) -> read_string(chars, tokens)
-      true -> read_next_char(chars, tokens)
-    end
+  defp tokenize("==" <> rest, tokens) do
+    tokenize(rest, [%Token{type: :eq, literal: "=="} | tokens])
+  end
+  defp tokenize("!=" <> rest, tokens) do
+    tokenize(rest, [%Token{type: :not_eq, literal: "!="} | tokens])
+  end
+  defp tokenize(<<ch::binary-size(1), rest::binary>>, tokens) when is_whitespace(ch) do
+    tokenize(rest, tokens)
+  end
+  defp tokenize(<<ch::binary-size(1), _::binary>> = chars, tokens) when is_letter(ch) do
+    read_identifier(chars, tokens)
+  end
+  defp tokenize(<<ch::binary-size(1), _::binary>> = chars, tokens) when is_digit(ch) do
+    read_number(chars, tokens)
+  end
+  defp tokenize(<<ch::binary-size(1), _::binary>> = chars, tokens) when is_quote(ch) do
+    read_string(chars, tokens)
+  end
+  defp tokenize(chars, tokens) do
+    read_next_char(chars, tokens)
   end
 
   defp read_identifier(chars, tokens) do
-    {identifier, rest} = Enum.split_while(chars, &is_letter/1)
-    identifier = Enum.join(identifier)
+    {identifier, rest} = read_sequence(chars, &is_letter/1)
     token = Token.new(type: Token.lookup_ident(identifier), literal: identifier)
 
     tokenize(rest, [token | tokens])
   end
 
   defp read_number(chars, tokens) do
-    {number, rest} = Enum.split_while(chars, &is_digit/1)
-    number = Enum.join(number)
+    {number, rest} = read_sequence(chars, &is_digit/1)
     token = Token.new(type: :int, literal: number)
 
     tokenize(rest, [token | tokens])
   end
 
-  defp read_two_char_operator(chars, tokens) do
-    {literal, rest} = Enum.split(chars, 2)
-    literal = Enum.join(literal)
-
-    token =
-      case literal do
-        "==" -> Token.new(type: :eq, literal: literal)
-        "!=" -> Token.new(type: :not_eq, literal: literal)
-      end
-
-    tokenize(rest, [token | tokens])
-  end
-
-  defp read_string([_quote | rest], tokens) do
-    {string, [_quote | rest]} = Enum.split_while(rest, &(!is_quote(&1)))
-    string = Enum.join(string)
+  defp read_string("\"" <> rest, tokens) do
+    {string, "\"" <> rest} = read_sequence(rest,  &(!is_quote(&1)))
     token = Token.new(type: :string, literal: string)
 
     tokenize(rest, [token | tokens])
   end
 
-  defp read_next_char(_chars = [ch | rest], tokens) do
+  defp read_next_char(<<ch::binary-size(1), rest::binary>>, tokens) do
     token =
       case ch do
         "=" -> Token.new(type: :assign, literal: ch)
@@ -84,21 +78,13 @@ defmodule Pippo.Interpreter.Lexer do
     tokenize(rest, [token | tokens])
   end
 
-  defp is_letter(ch) do
-    ("a" <= ch && ch <= "z") || ("A" <= ch && ch <= "Z") || ch == "_"
-  end
-
-  defp is_digit(ch) do
-    "0" <= ch && ch <= "9"
-  end
-
-  defp is_whitespace(ch) do
-    ch == " " || ch == "\n" || ch == "\t"
-  end
-
-  defp is_quote(ch), do: ch == "\""
-
-  defp is_two_char_operator(chars) do
-    (Enum.at(chars, 0) == "!" || Enum.at(chars, 0) == "=") && Enum.at(chars, 1) == "="
+  defp read_sequence(input, fun, acc \\ "")
+  defp read_sequence("", _, acc), do: {acc, ""}
+  defp read_sequence(<<ch::binary-size(1), rest::binary>> = chars, fun, acc) do
+    if fun.(ch) do
+      read_sequence(rest, fun, acc <> ch)
+    else
+      {acc, chars}
+    end
   end
 end

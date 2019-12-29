@@ -10,6 +10,7 @@ defmodule Pippo.Interpreter.Token do
     "if" => :if,
     "else" => :else,
     "return" => :return,
+    "NULL" => :null,
   }
 
   @types %{
@@ -49,6 +50,7 @@ defmodule Pippo.Interpreter.Token do
     if: "IF",
     else: "ELSE",
     return: "RETURN",
+    null: "NULL",
   }
 
   def new(type: type, literal: literal) when is_atom(type) and is_binary(literal) do
