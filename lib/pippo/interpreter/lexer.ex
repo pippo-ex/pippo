@@ -32,7 +32,7 @@ defmodule Pippo.Interpreter.Lexer do
   end
 
   defp read_identifier(chars, tokens) do
-    {identifier, rest} = read_sequence(chars, &is_letter/1)
+    {identifier, rest} = read_sequence(chars, &(is_letter(&1) or is_digit(&1)))
     token = Token.new(type: Token.lookup_ident(identifier), literal: identifier)
 
     tokenize(rest, [token | tokens])

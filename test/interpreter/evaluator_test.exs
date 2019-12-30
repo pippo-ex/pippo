@@ -393,19 +393,4 @@ defmodule Pippo.Interpreter.EvaluatorTest do
       end
     end)
   end
-
-  test "unexpected token" do
-    values = [
-      {
-        "let 1",
-        "type mismatch: INTEGER + BOOLEAN"
-      },
-    ]
-
-    Enum.each(values, fn {input, expected} ->
-      evaluated = test_eval(input)
-      assert %Error{} = evaluated
-      assert evaluated.message == expected
-    end)
-  end
 end

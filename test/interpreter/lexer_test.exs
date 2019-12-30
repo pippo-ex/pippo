@@ -30,6 +30,7 @@ defmodule Pippo.Interpreter.LexerTest do
     input = """
     let five = 5;
     let ten = 10;
+    let str123 = 1;
 
     let add = fn(x, y) {
       x + y;
@@ -63,6 +64,11 @@ defmodule Pippo.Interpreter.LexerTest do
       %Token{type: :ident, literal: "ten"},
       %Token{type: :assign, literal: "="},
       %Token{type: :int, literal: "10"},
+      %Token{type: :semicolon, literal: ";"},
+      %Token{type: :let, literal: "let"},
+      %Token{type: :ident, literal: "str123"},
+      %Token{type: :assign, literal: "="},
+      %Token{type: :int, literal: "1"},
       %Token{type: :semicolon, literal: ";"},
       %Token{type: :let, literal: "let"},
       %Token{type: :ident, literal: "add"},

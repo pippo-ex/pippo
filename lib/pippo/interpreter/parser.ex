@@ -72,7 +72,7 @@ defmodule Pippo.Interpreter.Parser do
 
     statements =
       case statement do
-        nil -> statement
+        nil -> statements
         statement -> [statement | statements]
       end
 
@@ -110,7 +110,7 @@ defmodule Pippo.Interpreter.Parser do
       p = skip_semicolon(p)
       {p, statement}
     else
-      _ -> {p, nil}
+      {:error, p, _} -> {p, nil}
     end
   end
 
