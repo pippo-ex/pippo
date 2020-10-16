@@ -2,20 +2,11 @@ use Mix.Config
 
 config :pippo, server_port: 4000
 
-config :pippo, web_hooks: [
-  {Pippo.WebHook.Ping, "/ping"},
-]
-
 config :pippo, producers: [
-  {Pippo.Producer.Ping, []}
+  {Pippo.Producer.PingTest, %{source: "web_hook", scheme: "/ping_test"}},
 ]
 
-config :pippo, consumers: [
-  {Pippo.Consumer.ConsoleInspector, []},
-  {Pippo.Consumer.ConsoleLogger, []},
-]
-
-config :pippo, flow: [
-  {Pippo.Producer.Ping, Pippo.Consumer.ConsoleLogger},
-  {Pippo.Producer.Ping, Pippo.Consumer.ConsoleInspector},
-]
+config :pippo, consumers: %{
+  "ping_test" => Pippo.Handler.PingTest,
+  "http_response" => Pippo.Consumer.HttpResponse,
+}

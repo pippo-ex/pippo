@@ -5,9 +5,12 @@ defmodule Pippo.Server do
   plug :match
   plug :dispatch
 
-  for {mod, scope} <- Application.get_env(:pippo, :web_hooks) do
-    match scope do
-      unquote(mod).call(conn)
+  for {mod, reg} <- Application.get_env(:pippo, :producers) do
+    case reg do
+      %{source: "web_hook", scheme: scheme} ->
+        match scheme do
+          unquote(mod).call(conn)
+        end
     end
   end
 
